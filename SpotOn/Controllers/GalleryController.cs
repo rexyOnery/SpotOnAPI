@@ -19,22 +19,22 @@ namespace WebApi.Controllers
             _galleryService = galleryService;
         }
 
-        [HttpGet]
-        public ActionResult<IEnumerable<GalleryResponse>> Get()
+        [HttpGet("{id:int}")]
+        public ActionResult<IEnumerable<GalleryResponse>> Get(int id)
         {
-            var gals = _galleryService.GetAll();
+            var gals = _galleryService.GetAll(id);
             return Ok(gals);
         }
 
-        [HttpPost("addgallery"), DisableRequestSizeLimit]
-        public IActionResult UploadFile(GalleryRequests model)
+        [HttpPost, DisableRequestSizeLimit]
+        public ActionResult UploadFile(GalleryRequests model)
         {
 
             try
             {
                 // save 
                 var _photo = _galleryService.AddPhoto(model);
-                if (_photo.Count() > 0)
+                if (_photo)
                 {
                     return Ok(new { message = "The file was successfully uploaded" });
                 }

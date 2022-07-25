@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using WebApi.Entities;
 using WebApi.Helpers;
@@ -8,9 +9,9 @@ namespace WebApi.Services
 {
     public interface IGalleryService
     {
-        IEnumerable<GalleryResponse> AddPhoto(GalleryRequests model);
+        bool AddPhoto(GalleryRequests model);
         void Delete(int id);
-        IEnumerable<GalleryResponse> GetAll();
+        IEnumerable<GalleryResponse> GetAll(int id);
     }
 
     public class GalleryService : IGalleryService
@@ -26,12 +27,19 @@ namespace WebApi.Services
             _context = context;
             _mapper = mapper;
         }
-        public IEnumerable<GalleryResponse> AddPhoto(GalleryRequests model)
+        public bool AddPhoto(GalleryRequests model)
         {
-            var galpix = _mapper.Map<Gallery>(model);
-            _context.Gallerys.Add(galpix);
-            _context.SaveChanges();
-            return _mapper.Map<IList<GalleryResponse>>(galpix);
+            try
+            {
+                var galpix = _mapper.Map<Gallery>(model);
+                _context.Gallerys.Add(galpix);
+                _context.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void Delete(int id)
@@ -41,9 +49,9 @@ namespace WebApi.Services
             _context.SaveChanges();
         }
 
-        public IEnumerable<GalleryResponse> GetAll()
+        public IEnumerable<GalleryResponse> GetAll(int id)
         {
-            var gal = _context.Gallerys;
+            var gal = _context.Gallerys.Where(x => x.AccountId == id);
             return _mapper.Map<IList<GalleryResponse>>(gal);
         }
 
