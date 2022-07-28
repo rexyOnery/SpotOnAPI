@@ -179,7 +179,7 @@ namespace WebApi.Services
             _context.SaveChanges();
 
             // send email
-            //sendPasswordResetEmail(account, origin);
+            sendPasswordResetEmail(account, origin);
             return account.ResetToken;
         }
 
@@ -357,7 +357,7 @@ namespace WebApi.Services
         private string randomTokenString()
         {
             using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
-            var randomBytes = new byte[40];
+            var randomBytes = new byte[6];
             rngCryptoServiceProvider.GetBytes(randomBytes);
             // convert random bytes to hex string
             return BitConverter.ToString(randomBytes).Replace("-", "");
@@ -409,19 +409,21 @@ namespace WebApi.Services
             string message;
             if (!string.IsNullOrEmpty(origin))
             {
-                var resetUrl = $"{origin}/account/reset-password?token={account.ResetToken}";
-                message = $@"<p>Please click the below link to reset your password, the link will be valid for 1 day:</p>
-                             <p><a href=""{resetUrl}"">{resetUrl}</a></p>";
+                // var resetUrl = $"{origin}/account/reset-password?token={account.ResetToken}";
+                // message = $@"<p>Please click the below link to reset your password, the link will be valid for 1 day:</p>
+                //              <p><a href=""{resetUrl}"">{resetUrl}</a></p>";
+                message = $@"<p>Please use the below token to reset your password:</p>
+                             <p><b>{account.ResetToken}</b></p>";
             }
             else
             {
-                message = $@"<p>Please use the below token to reset your password with the <code>/accounts/reset-password</code> api route:</p>
+                message = $@"<p>Please use the below token to reset your password:</p>
                              <p><code>{account.ResetToken}</code></p>";
             }
 
             _emailService.Send(
                 to: account.Email,
-                subject: "Steezz Laundry Sign-up Verification - Reset Password",
+                subject: "SpotOn - Reset Password",
                 html: $@"<h4>Reset Password Email</h4>
                          {message}"
             );

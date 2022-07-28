@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
@@ -29,17 +30,16 @@ namespace WebApi.Services
         }
         public bool AddPhoto(GalleryRequests model)
         {
-            try
+            var gallery_count = getAllGallery(model.AccountId);
+            if (gallery_count.Count() <= 4)
             {
                 var galpix = _mapper.Map<Gallery>(model);
+                galpix.DateAdded = DateTime.UtcNow.ToShortDateString();
                 _context.Gallerys.Add(galpix);
                 _context.SaveChanges();
                 return true;
             }
-            catch
-            {
-                return false;
-            }
+            return false;
         }
 
         public void Delete(int id)
@@ -58,9 +58,24 @@ namespace WebApi.Services
         private Gallery getGallery(int id)
         {
             var gal = _context.Gallerys.Find(id);
-            if (gal == null) throw new KeyNotFoundException("Service Type not found");
+            if (gal == null) return null;
             return gal;
         }
+
+        private IEnumerable<Gallery> getAllGallery(int id)
+        {
+            var gal = _context.Gallerys.Where(x => x.AccountId == id);
+            if (gal == null) return null;
+            return gal;
+        }
+
+        // function calculateDaysBetweenDates(begin, end) {
+        //     var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+        //     var firstDate = new Date(begin);
+        //     var secondDate = new Date(end);
+        //     var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+        //     return diffDays;
+        // }
 
     }
 }
