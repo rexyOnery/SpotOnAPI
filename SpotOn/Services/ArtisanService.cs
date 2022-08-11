@@ -19,6 +19,7 @@ namespace WebApi.Services
         ArtisanResponse Update(int id);
         bool UpdatePhoto(int id, PhotoRequest model);
         Task<int> GetPages();
+        Task<int> GetPages(int type_id);
         IEnumerable<ArtisanDisplayResponse> FindPaged(int page, int pageSize);
         IEnumerable<ArtisanDisplayResponse> FindPaged(int id, int page, int pageSize);
         IEnumerable<ArtisanDisplayResponse> FilterArtisan(ArtisanFilterRequest model);
@@ -157,9 +158,24 @@ namespace WebApi.Services
             var lists = _context.Artisans
                 .Where(x => x.IsApproved == true)
                 .ToList();
-            var pages = lists.Count / 10;
+            double pageCount = (double)((decimal)lists.Count / Convert.ToDecimal(5));
+            var pages = (int)Math.Ceiling(pageCount);
+            
             return Task.FromResult(pages);
         }
+
+        
+        public Task<int> GetPages(int type_id)
+        {
+            var lists = _context.Artisans
+                .Where(x => x.IsApproved == true && x.ArtisanTypeId == type_id)
+                .ToList();            
+
+            double pageCount = (double)((decimal)lists.Count / Convert.ToDecimal(5));
+            var pages = (int)Math.Ceiling(pageCount);
+
+            return Task.FromResult(pages);
+        } 
 
         public IEnumerable<ArtisanDisplayResponse> FindPaged(int page, int pageSize)
         {

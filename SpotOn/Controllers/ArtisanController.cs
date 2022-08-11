@@ -65,10 +65,23 @@ namespace WebApi.Controllers
             return await _artisanService.GetPages();
         }
 
+        [HttpGet("pages/{type:int}")]
+        public async Task<ActionResult<int>> GetPages(int type)
+        {
+            return await _artisanService.GetPages(type);
+        }
+
         [HttpGet("pagedartisans/{page:int}/{pagesize:int}")]
         public ActionResult<IEnumerable<ArtisanDisplayResponse>> GetArtisans(int page, int pageSize)
         {
             var pagedartisans = _artisanService.FindPaged(page, pageSize);
+            return Ok(pagedartisans);
+        }
+
+        [HttpGet("pagedartisanstype/{category:int}/{page:int}/{pagesize:int}")]
+        public ActionResult<IEnumerable<ArtisanDisplayResponse>> GetTypedArtisans(int category, int page, int pageSize)
+        {
+            var pagedartisans = _artisanService.FindPaged(category, page, pageSize);
             return Ok(pagedartisans);
         }
 
