@@ -32,6 +32,14 @@ namespace WebApi.Controllers
             return Ok(response);
         }
 
+        [HttpPost("authenticatebyemail")]
+        public ActionResult<AuthenticateResponse> AuthenticateByEmail(AuthenticateRequest model)
+        {
+            var response = _accountService.AuthenticateByEmail(model, ipAddress());
+            setTokenCookie(response.RefreshToken);
+            return Ok(response);
+        }
+
         [HttpPost("refresh-token")]
         public ActionResult<AuthenticateResponse> RefreshToken()
         {
@@ -62,9 +70,16 @@ namespace WebApi.Controllers
         [HttpPost("register")]
         public IActionResult Register(RegisterRequest model)
         {
-            bool account = _accountService.Register(model, Request.Headers["origin"]);
+            try
+            {
+                bool account = _accountService.Register(model, Request.Headers["origin"]);
+                return Ok(new { message = account });
+            }
+            catch (Exception r)
+            {
+                return Ok(new { message = r.Message });
+            }
 
-            return Ok(new { message = account });
         }
 
         [HttpPost("verify-email")]
@@ -163,6 +178,13 @@ namespace WebApi.Controllers
         public IActionResult sendMail(MailModel model)
         {
             _accountService.SendMail(model.Name, model.Phone, model.Subject, model.Message, model.Email);
+            return Ok(new { message = "Message successfully sent." });
+        }
+
+        [HttpPost("send-message")]
+        public IActionResult sendMessage(MessageModel model)
+        {
+            _accountService.SendMessage(model.Name, model.Message, model.Email);
             return Ok(new { message = "Message successfully sent." });
         }
 

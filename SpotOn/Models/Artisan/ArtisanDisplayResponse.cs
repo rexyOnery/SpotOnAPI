@@ -7,6 +7,8 @@ namespace WebApi.Models.Artisan
         public string Location { get; set; }
         public string Photo { get; set; }
         public string Phone { get; set; }
-        public string Category { get; set; } 
+        public string Category { get; set; }
+        public string RefererCode { get; set; }
+        public int RefererCount { get; set; }
     }
 }

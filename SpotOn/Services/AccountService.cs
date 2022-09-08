@@ -18,6 +18,7 @@ namespace WebApi.Services
     public interface IAccountService
     {
         AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
+        AuthenticateResponse AuthenticateByEmail(AuthenticateRequest model, string ipAddress);
         AuthenticateResponse RefreshToken(string token, string ipAddress);
         void RevokeToken(string token, string ipAddress);
         bool Register(RegisterRequest model, string origin);
@@ -29,9 +30,11 @@ namespace WebApi.Services
         IEnumerable<AccountResponse> GetAllAgents();
         AccountResponse GetById(int id);
         AccountResponse Create(CreateRequest model);
+
         AccountResponse Update(int id, UpdateRequest model);
         void Delete(int id);
         void SendMail(string name, string phone, string subject, string message, string email);
+        void SendMessage(string name, string message, string email);
     }
 
     public class AccountService : IAccountService
@@ -60,6 +63,31 @@ namespace WebApi.Services
         public AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress)
         {
             var account = _context.Accounts.SingleOrDefault(x => x.UserName == model.UserName);
+
+            if (account == null || !account.IsVerified || !BC.Verify(model.Password, account.PasswordHash))
+                throw new AppException("Login Name or password is incorrect");
+
+            // authentication successful so generate jwt and refresh tokens
+            var jwtToken = generateJwtToken(account);
+            var refreshToken = generateRefreshToken(ipAddress);
+            account.RefreshTokens.Add(refreshToken);
+
+            // remove old refresh tokens from account
+            removeOldRefreshTokens(account);
+
+            // save changes to db
+            _context.Update(account);
+            _context.SaveChanges();
+
+            var response = _mapper.Map<AuthenticateResponse>(account);
+            response.JwtToken = jwtToken;
+            response.RefreshToken = refreshToken.Token;
+            return response;
+        }
+
+        public AuthenticateResponse AuthenticateByEmail(AuthenticateRequest model, string ipAddress)
+        {
+            var account = _context.Accounts.SingleOrDefault(x => x.Email == model.UserName);
 
             if (account == null || !account.IsVerified || !BC.Verify(model.Password, account.PasswordHash))
                 throw new AppException("Login Name or password is incorrect");
@@ -126,6 +154,13 @@ namespace WebApi.Services
                 // send already registered error in email to prevent account enumeration
                 //sendAlreadyRegisteredEmail(model.Email, origin);
                 return false;//GetByEmail(model.Email);
+            }
+            if (_context.Accounts.Any(x => x.Email == model.Email))
+            {
+                // send already registered error in email to prevent account enumeration
+                //sendAlreadyRegisteredEmail(model.Email, origin);
+                throw new AppException("An account is already registered with the email address");
+                //return false;//GetByEmail(model.Email);
             }
 
             // map model to new account object
@@ -296,7 +331,16 @@ namespace WebApi.Services
            );
         }
 
-
+        public void SendMessage(string name, string message, string email)
+        {
+            _emailService.Send(
+              to: "contact.spoton@bit-crunch.com",
+              subject: "Message from " + name,
+              html: $@"<h4>Name: {name}.<br />Email: {email}</h4><br /><br />
+                         {message}",
+              from: email
+          );
+        }
 
         // helper methods
         private Account getAccount(int id)
@@ -428,5 +472,7 @@ namespace WebApi.Services
                          {message}"
             );
         }
+
+
     }
 }

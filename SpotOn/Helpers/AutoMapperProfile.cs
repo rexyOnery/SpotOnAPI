@@ -1,12 +1,12 @@
 using AutoMapper;
 using WebApi.Entities;
 using WebApi.Models.Accounts;
-using WebApi.Models.SMS;
 using WebApi.Models.Gallery;
 using WebApi.Models.Artisan;
 using WebApi.Models.LocalArea;
 using WebApi.Models.UserState;
 using WebApi.Models.Users;
+using WebApi.Models.Bank;
 
 namespace WebApi.Helpers
 {
@@ -59,6 +59,10 @@ namespace WebApi.Helpers
 
             CreateMap<UserRequest, User>();
             CreateMap<User, UserResponse>();
+
+            CreateMap<BankRequest, Bank>();
+            CreateMap<Bank, BankResponse>();
+
 
         }
     }

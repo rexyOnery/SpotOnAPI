@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using System;
 using System.IO;
+using Web.Services;
 using WebApi.Helpers;
 using WebApi.Middleware;
 using WebApi.Services;
@@ -43,6 +44,7 @@ namespace WebApi
             services.AddScoped<ILocalAreaService, LocalAreaService>();
             services.AddScoped<IUserStateService, UserStateService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IBankService, BankService>();
         }
 
         // configure the HTTP request pipeline

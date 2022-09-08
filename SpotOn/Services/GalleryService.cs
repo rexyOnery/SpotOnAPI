@@ -13,6 +13,7 @@ namespace WebApi.Services
         bool AddPhoto(GalleryRequests model);
         void Delete(int id);
         IEnumerable<GalleryResponse> GetAll(int id);
+        IEnumerable<GalleryResponse> GetAllArtisanPhoto(int id);
     }
 
     public class GalleryService : IGalleryService
@@ -50,6 +51,13 @@ namespace WebApi.Services
         }
 
         public IEnumerable<GalleryResponse> GetAll(int id)
+        {
+            var artisan_id = _context.Artisans.Find(id);
+            var gal = _context.Gallerys.Where(x => x.AccountId == artisan_id.AccountId);
+            return _mapper.Map<IList<GalleryResponse>>(gal);
+        }
+
+        public IEnumerable<GalleryResponse> GetAllArtisanPhoto(int id)
         {
             var gal = _context.Gallerys.Where(x => x.AccountId == id);
             return _mapper.Map<IList<GalleryResponse>>(gal);

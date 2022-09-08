@@ -9,16 +9,16 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/dotnet-5-signup-verification-api/bin/Debug/net5.0/WebApi.dll",
+            "program": "${workspaceFolder}/SpotOn/bin/Debug/net5.0/WebApi.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/dotnet-5-signup-verification-api",
+            "cwd": "${workspaceFolder}/SpotOn",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Production"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"

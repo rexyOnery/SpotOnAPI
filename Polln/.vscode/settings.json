@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/f21cff92-5f90-4a9b-a471-7935e66f2e1a/resourceGroups/appsvc_windows_centralus/providers/Microsoft.Web/sites/afrikvillage",
+    "appService.deploySubpath": "publish"
+}

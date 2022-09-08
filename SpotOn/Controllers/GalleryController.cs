@@ -26,6 +26,13 @@ namespace WebApi.Controllers
             return Ok(gals);
         }
 
+        [HttpGet("getallartisanphoto/{id:int}")]
+        public ActionResult<IEnumerable<GalleryResponse>> GetAllArtisanPhoto(int id)
+        {
+            var gals = _galleryService.GetAllArtisanPhoto(id);
+            return Ok(gals);
+        }
+
         [HttpPost, DisableRequestSizeLimit]
         public ActionResult UploadFile(GalleryRequests model)
         {

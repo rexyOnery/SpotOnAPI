@@ -15,5 +15,7 @@ namespace WebApi.Models.Artisan
         public int Ratings { get; set; }
         public bool IsApproved { get; set; }
         public DateTime? DateApproved { get; set; }
+        public string RefererCode { get; set; }
+        public int RefererCount { get; set; }
     }
 }

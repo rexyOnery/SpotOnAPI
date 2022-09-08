@@ -24,6 +24,7 @@ namespace WebApi.Services
         IEnumerable<ArtisanDisplayResponse> FindPaged(int id, int page, int pageSize);
         IEnumerable<ArtisanDisplayResponse> FilterArtisan(ArtisanFilterRequest model);
         IEnumerable<ArtisanDisplayResponse> FilterArtisanByType(ArtisanFilterRequest model);
+        bool UpdateReferrerCode(ReferrerCodeRequest model);
     }
 
     public class ArtisanService : IArtisanService
@@ -45,6 +46,8 @@ namespace WebApi.Services
                 artisan.DateApproved = DateTime.UtcNow.AddDays(-1);
                 artisan.Ratings = 0;
                 artisan.IsApproved = false;
+                artisan.RefererCount = 0;
+                artisan.RefererCode = "RC" + RandomGenerator.GenerateRandomString(6);
                 _context.Artisans.Add(artisan);
                 _context.SaveChanges();
                 return true;
@@ -96,11 +99,14 @@ namespace WebApi.Services
                  (artisan, artisantype) => new
                  {
                      artisan.Id,
+                     artisan.AccountId,
                      artisan.Name,
                      artisan.Location,
                      artisan.Photo,
                      artisan.Phone,
                      artisan.LocalAreaId,
+                     artisan.RefererCode,
+                     artisan.RefererCount,
                      artisantype.Category
                  })
                 .Where(x => x.Id == id)
@@ -117,7 +123,9 @@ namespace WebApi.Services
                     Location = GetState(response.LocalAreaId) + ", " + response.Location,
                     Photo = response.Photo,
                     Phone = response.Phone,
-                    Category = response.Category
+                    Category = response.Category,
+                    RefererCode = response.RefererCode,
+                    RefererCount = response.RefererCount
                 };
                 responseList.Add(responseDisplayResponse);
             }
@@ -158,24 +166,24 @@ namespace WebApi.Services
             var lists = _context.Artisans
                 .Where(x => x.IsApproved == true)
                 .ToList();
-            double pageCount = (double)((decimal)lists.Count / Convert.ToDecimal(5));
+            double pageCount = (double)((decimal)lists.Count / Convert.ToDecimal(50));
             var pages = (int)Math.Ceiling(pageCount);
-            
+
             return Task.FromResult(pages);
         }
 
-        
+
         public Task<int> GetPages(int type_id)
         {
             var lists = _context.Artisans
                 .Where(x => x.IsApproved == true && x.ArtisanTypeId == type_id)
-                .ToList();            
+                .ToList();
 
-            double pageCount = (double)((decimal)lists.Count / Convert.ToDecimal(5));
+            double pageCount = (double)((decimal)lists.Count / Convert.ToDecimal(50));
             var pages = (int)Math.Ceiling(pageCount);
 
             return Task.FromResult(pages);
-        } 
+        }
 
         public IEnumerable<ArtisanDisplayResponse> FindPaged(int page, int pageSize)
         {
@@ -351,5 +359,13 @@ namespace WebApi.Services
             catch { return null; }
         }
 
+        public bool UpdateReferrerCode(ReferrerCodeRequest model)
+        {
+            var code = _context.Artisans.FirstOrDefault(c => c.RefererCode == model.ReferrerCode);
+            if (code == null) return false;
+            code.RefererCount = code.RefererCount + 1;
+            _context.SaveChanges();
+            return true;
+        }
     }
 }

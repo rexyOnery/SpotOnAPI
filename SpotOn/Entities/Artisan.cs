@@ -15,9 +15,13 @@ namespace WebApi.Entities
         public string Location { get; set; }
         public int Ratings { get; set; }
         public bool IsApproved { get; set; }
+        public string RefererCode { get; set; }
+        public int RefererCount { get; set; }
         public DateTime? DateApproved { get; set; }
         public ArtisanType ArtisanType { get; set; }
         public Account Account { get; set; }
         public LocalArea LocalArea { get; set; }
+
+        public ICollection<Bank> Banks { get; set; }
     }
 }

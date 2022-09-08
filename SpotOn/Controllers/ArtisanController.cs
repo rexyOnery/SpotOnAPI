@@ -92,7 +92,12 @@ namespace WebApi.Controllers
             return Ok(pagedartisans);
         }
 
-
+        [HttpPost("/setreferrercode")]
+        public ActionResult ReferrerCode(ReferrerCodeRequest model)
+        {
+            var artisan = _artisanService.UpdateReferrerCode(model);
+            return Ok(artisan);
+        }
 
 
         [HttpPut("{id:int}")]

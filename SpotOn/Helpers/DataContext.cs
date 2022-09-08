@@ -14,6 +14,8 @@ namespace WebApi.Helpers
         public DbSet<LocalArea> LocalAreas { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Bank> Banks { get; set; }
+
 
         private readonly IConfiguration Configuration;
         public DataContext(IConfiguration configuration)

@@ -113,6 +113,12 @@ namespace WebApi.Migrations
                     b.Property<int>("Ratings")
                         .HasColumnType("int");
 
+                    b.Property<string>("RefererCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RefererCount")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
@@ -137,6 +143,41 @@ namespace WebApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ArtisanTypes");
+                });
+
+            modelBuilder.Entity("WebApi.Entities.Bank", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ArtisanId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BankAccountName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankAccountNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("isPaid")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArtisanId");
+
+                    b.ToTable("Banks");
                 });
 
             modelBuilder.Entity("WebApi.Entities.Gallery", b =>
@@ -329,6 +370,17 @@ namespace WebApi.Migrations
                     b.Navigation("LocalArea");
                 });
 
+            modelBuilder.Entity("WebApi.Entities.Bank", b =>
+                {
+                    b.HasOne("WebApi.Entities.Artisan", "Artisan")
+                        .WithMany("Banks")
+                        .HasForeignKey("ArtisanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Artisan");
+                });
+
             modelBuilder.Entity("WebApi.Entities.Gallery", b =>
                 {
                     b.HasOne("WebApi.Entities.Account", "Account")
@@ -388,6 +440,11 @@ namespace WebApi.Migrations
                     b.Navigation("Gallerys");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("WebApi.Entities.Artisan", b =>
+                {
+                    b.Navigation("Banks");
                 });
 
             modelBuilder.Entity("WebApi.Entities.ArtisanType", b =>
