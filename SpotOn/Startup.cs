@@ -45,6 +45,8 @@ namespace WebApi
             services.AddScoped<IUserStateService, UserStateService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IBankService, BankService>();
+            services.AddScoped<IDashboardService, DashboardService>();
+
         }
 
         // configure the HTTP request pipeline

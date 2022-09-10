@@ -7,6 +7,7 @@ using WebApi.Models.LocalArea;
 using WebApi.Models.UserState;
 using WebApi.Models.Users;
 using WebApi.Models.Bank;
+using WebApi.Models.Dashboard;
 
 namespace WebApi.Helpers
 {
@@ -63,6 +64,7 @@ namespace WebApi.Helpers
             CreateMap<BankRequest, Bank>();
             CreateMap<Bank, BankResponse>();
 
+            CreateMap<Artisan, DashboardResponse>();
 
         }
     }

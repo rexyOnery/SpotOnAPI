@@ -86,7 +86,7 @@ namespace WebApi.Services
 
         public IEnumerable<ArtisanResponse> GetAll()
         {
-            var gal = _context.Artisans;
+            var gal = _context.Artisans.Where(x => x.IsApproved == true && x.DateApproved.Value.AddYears(1) > DateTime.Now);
             return _mapper.Map<IList<ArtisanResponse>>(gal);
         }
 
@@ -164,7 +164,7 @@ namespace WebApi.Services
         public Task<int> GetPages()
         {
             var lists = _context.Artisans
-                .Where(x => x.IsApproved == true)
+                .Where(x => x.IsApproved == true && x.DateApproved.Value.AddYears(1) > DateTime.Now)
                 .ToList();
             double pageCount = (double)((decimal)lists.Count / Convert.ToDecimal(50));
             var pages = (int)Math.Ceiling(pageCount);
@@ -176,7 +176,7 @@ namespace WebApi.Services
         public Task<int> GetPages(int type_id)
         {
             var lists = _context.Artisans
-                .Where(x => x.IsApproved == true && x.ArtisanTypeId == type_id)
+                .Where(x => x.IsApproved == true && x.ArtisanTypeId == type_id && x.DateApproved.Value.AddYears(1) > DateTime.Now)
                 .ToList();
 
             double pageCount = (double)((decimal)lists.Count / Convert.ToDecimal(50));
@@ -194,6 +194,7 @@ namespace WebApi.Services
                  (artisan, artisantype) => new
                  {
                      artisan.Id,
+                     artisan.DateApproved,
                      artisan.Name,
                      artisan.Location,
                      artisan.Photo,
@@ -201,7 +202,7 @@ namespace WebApi.Services
                      artisan.LocalAreaId,
                      artisantype.Category
                  })
-                .Where(x => x.IsApproved == true)
+                .Where(x => x.IsApproved == true && x.DateApproved.Value.AddYears(1) > DateTime.Now)
                 .Skip(page * pageSize)
                 .Take(pageSize)
                 .ToList();
@@ -233,6 +234,7 @@ namespace WebApi.Services
                  (artisan, artisantype) => new
                  {
                      artisan.Id,
+                     artisan.DateApproved,
                      artisan.ArtisanTypeId,
                      artisan.Name,
                      artisan.Location,
@@ -241,7 +243,7 @@ namespace WebApi.Services
                      artisan.LocalAreaId,
                      artisantype.Category
                  })
-                .Where(x => x.IsApproved == true && x.ArtisanTypeId == id)
+                .Where(x => x.IsApproved == true && x.ArtisanTypeId == id && x.DateApproved.Value.AddYears(1) > DateTime.Now)
                 .Skip(page * pageSize)
                 .Take(pageSize)
                 .ToList();
@@ -273,6 +275,7 @@ namespace WebApi.Services
                  (artisan, artisantype) => new
                  {
                      artisan.Id,
+                     artisan.DateApproved,
                      artisan.ArtisanTypeId,
                      artisan.Name,
                      artisan.Location,
@@ -281,7 +284,7 @@ namespace WebApi.Services
                      artisan.LocalAreaId,
                      artisantype.Category
                  })
-                .Where(x => x.IsApproved == true && x.LocalAreaId == model.LocalAreaId && x.Location == model.Location)
+                .Where(x => x.IsApproved == true && x.DateApproved.Value.AddYears(1) < DateTime.Now && x.LocalAreaId == model.LocalAreaId && x.Location == model.Location)
                 .ToList();
 
             List<ArtisanDisplayResponse> responseList = new List<ArtisanDisplayResponse>();
@@ -312,6 +315,7 @@ namespace WebApi.Services
                  (artisan, artisantype) => new
                  {
                      artisan.Id,
+                     artisan.DateApproved,
                      artisan.ArtisanTypeId,
                      artisan.Name,
                      artisan.Location,
@@ -320,7 +324,7 @@ namespace WebApi.Services
                      artisan.LocalAreaId,
                      artisantype.Category
                  })
-                .Where(x => x.IsApproved == true && x.ArtisanTypeId == model.ArtisanTypeId && x.LocalAreaId == model.LocalAreaId && x.Location == model.Location)
+                .Where(x => x.IsApproved == true && x.DateApproved.Value.AddYears(1) < DateTime.Now && x.ArtisanTypeId == model.ArtisanTypeId && x.LocalAreaId == model.LocalAreaId && x.Location == model.Location)
                 .ToList();
 
             List<ArtisanDisplayResponse> responseList = new List<ArtisanDisplayResponse>();
